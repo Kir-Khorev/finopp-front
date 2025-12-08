@@ -8,7 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const formatFinanceQuestion = (answers: FinanceAnswers): string => {
   const totalIncome = answers.incomeSources.reduce((sum, s) => sum + s.amount, 0);
   const totalExpenses = answers.expenseSources.reduce((sum, s) => sum + s.amount, 0);
-  
+
   const incomeParts = answers.incomeSources
     .filter(s => s.amount > 0)
     .map(s => {
@@ -32,7 +32,7 @@ const formatFinanceQuestion = (answers: FinanceAnswers): string => {
   question += incomeParts.join('\n') + '\n\n';
   question += `💸 РАСХОДЫ (всего ₽${totalExpenses.toLocaleString()}):\n`;
   question += expenseParts.join('\n') + '\n\n';
-  
+
   if (problemLabels.length > 0) {
     question += `❗ ПРОБЛЕМЫ:\n${problemLabels.join('\n')}\n\n`;
   }
@@ -61,9 +61,9 @@ const formatFinanceQuestion = (answers: FinanceAnswers): string => {
 const parseAIResponse = async (aiAnswer: string, answers: FinanceAnswers): Promise<FinanceAdvice> => {
   const totalIncome = answers.incomeSources.reduce((sum, s) => sum + s.amount, 0);
   const totalExpenses = answers.expenseSources.reduce((sum, s) => sum + s.amount, 0);
-  
+
   // Импортируем вспомогательные функции из старого файла
-  const { generateBudgetAllocation, generateSavingsProjection } = await import('./financeHelpers');
+  const { generateBudgetAllocation, generateSavingsProjection } = await import('@/utils/financeHelpers');
 
   return {
     summary: aiAnswer,
@@ -79,7 +79,7 @@ const parseAIResponse = async (aiAnswer: string, answers: FinanceAnswers): Promi
 export const generateFinanceAdviceFromAPI = async (answers: FinanceAnswers): Promise<FinanceAdvice> => {
   try {
     const question = formatFinanceQuestion(answers);
-    
+
     const response = await fetch(`${API_URL}/api/v1/advice`, {
       method: 'POST',
       headers: {
@@ -94,11 +94,11 @@ export const generateFinanceAdviceFromAPI = async (answers: FinanceAnswers): Pro
 
     const data = await response.json();
     return parseAIResponse(data.answer, answers);
-    
+
   } catch (error) {
     console.error('API request failed:', error);
     // Fallback на локальный mock если API недоступен
-    const { generateFinanceAdviceLocal } = await import('./financeHelpers');
+    const { generateFinanceAdviceLocal } = await import('@/utils/financeHelpers');
     return generateFinanceAdviceLocal(answers);
   }
 };

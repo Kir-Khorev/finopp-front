@@ -7,7 +7,7 @@ export const generateFinanceAdviceLocal = async (answers: FinanceAnswers): Promi
 
   const totalIncome = answers.incomeSources.reduce((sum, s) => sum + s.amount, 0);
   const totalExpenses = answers.expenseSources.reduce((sum, s) => sum + s.amount, 0);
-  
+
   const budgetAllocation = generateBudgetAllocation(totalIncome, totalExpenses, answers);
   const recommendations = generateRecommendations(answers, totalIncome, totalExpenses);
   const projectedSavings = generateSavingsProjection(totalIncome, totalExpenses);
@@ -23,7 +23,7 @@ export const generateFinanceAdviceLocal = async (answers: FinanceAnswers): Promi
 const generateSummary = (answers: FinanceAnswers, totalIncome: number, totalExpenses: number): string => {
   const balance = totalIncome - totalExpenses;
   const savingsRate = totalIncome > 0 ? Math.round((balance / totalIncome) * 100) : 0;
-  
+
   const incomeTypes = answers.incomeSources
     .filter(s => s.amount > 0)
     .map(s => INCOME_TYPES.find(t => t.value === s.type)?.label || s.type)
@@ -32,7 +32,7 @@ const generateSummary = (answers: FinanceAnswers, totalIncome: number, totalExpe
   let summaryParts: string[] = [];
 
   summaryParts.push(`При общем доходе ₽${totalIncome.toLocaleString()} (${incomeTypes}) и расходах ₽${totalExpenses.toLocaleString()}`);
-  
+
   if (balance > 0) {
     summaryParts.push(`у вас остаётся ₽${balance.toLocaleString()} (${savingsRate}% от дохода).`);
   } else if (balance < 0) {
@@ -58,7 +58,7 @@ const generateSummary = (answers: FinanceAnswers, totalIncome: number, totalExpe
 export const generateBudgetAllocation = (totalIncome: number, totalExpenses: number, answers: FinanceAnswers): BudgetItem[] => {
   const balance = totalIncome - totalExpenses;
   const hasDebt = answers.problems.includes('debt') || answers.expenseSources.some(e => e.type === 'credit' || e.type === 'debt');
-  
+
   if (balance < 0) {
     // Deficit budget
     return [
