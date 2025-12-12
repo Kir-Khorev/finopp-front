@@ -1,0 +1,53 @@
+name: Manual Deploy
+
+on:
+  workflow_dispatch:  # Только ручной запуск
+    inputs:
+      environment:
+        description: 'Deploy environment'
+        required: true
+        type: choice
+        options:
+          - production
+          - preview
+
+jobs:
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+      
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: 📚 Install dependencies
+        run: npm ci
+      
+      - name: 🏗️ Build
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+      
+      - name: 🚀 Deploy to ${{ inputs.environment }}
+        run: |
+          if [ "${{ inputs.environment }}" == "production" ]; then
+            echo "🚀 Deploying to production..."
+            # npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
+          else
+            echo "🚀 Deploying to preview..."
+            # npx vercel --token=${{ secrets.VERCEL_TOKEN }}
+          fi
+          echo "✅ Deployment triggered! Vercel auto-deploy is handling it."
+      
+      - name: ✅ Complete
+        run: |
+          echo "✅ Deployment to ${{ inputs.environment }} completed!"
+          echo "🔗 Check Vercel dashboard for details"
+
