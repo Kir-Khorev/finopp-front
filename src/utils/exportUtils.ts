@@ -7,7 +7,7 @@ import * as XLSX from 'xlsx';
  * @param filename Name of the file (without extension)
  * @param sheetName Name of the sheet in Excel
  */
-export const exportToExcel = (data: any[], filename: string, sheetName: string = 'Sheet1') => {
+export const exportToExcel = (data: Record<string, unknown>[], filename: string, sheetName: string = 'Sheet1') => {
   // Create a worksheet
   const worksheet = XLSX.utils.json_to_sheet(data);
   
@@ -23,7 +23,7 @@ export const exportToExcel = (data: any[], filename: string, sheetName: string =
  * Format capacity data for Excel export
  * @param data Chart data for capacity
  */
-export const formatCapacityDataForExport = (data: any[]) => {
+export const formatCapacityDataForExport = (data: Record<string, unknown>[]) => {
   return data.map(item => ({
     Week: item.name,
     'Total Capacity': item.totalCapacity?.toFixed(1) || 0,
@@ -36,7 +36,7 @@ export const formatCapacityDataForExport = (data: any[]) => {
  * Format availability data for Excel export
  * @param data Availability table data
  */
-export const formatAvailabilityDataForExport = (data: any[]) => {
+export const formatAvailabilityDataForExport = (data: Record<string, unknown>[]) => {
   return data.map(item => ({
     Name: item.name,
     Role: item.role,
@@ -52,7 +52,7 @@ export const formatAvailabilityDataForExport = (data: any[]) => {
  * Format planned roles data for Excel export
  * @param data Planned roles table data
  */
-export const formatPlannedRolesDataForExport = (data: any[]) => {
+export const formatPlannedRolesDataForExport = (data: Record<string, unknown>[]) => {
   return data.map(item => ({
     Name: item.name,
     Role: item.role,

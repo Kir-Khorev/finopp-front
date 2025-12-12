@@ -29,7 +29,7 @@ const generateSummary = (answers: FinanceAnswers, totalIncome: number, totalExpe
     .map(s => INCOME_TYPES.find(t => t.value === s.type)?.label || s.type)
     .join(', ');
 
-  let summaryParts: string[] = [];
+  const summaryParts: string[] = [];
 
   summaryParts.push(`При общем доходе ₽${totalIncome.toLocaleString()} (${incomeTypes}) и расходах ₽${totalExpenses.toLocaleString()}`);
 
