@@ -53,13 +53,15 @@ Frontend будет доступен на **http://localhost:5173**
 
 ### Environment Variables
 
-Создайте `.env` файл:
+Создайте `.env` файл для локальной разработки:
 
 ```env
 VITE_API_URL=http://localhost:8080
 ```
 
-**Важно:** `.env` в `.gitignore` — не коммитьте его!
+**Важно:** 
+- `.env` в `.gitignore` — не коммитьте его!
+- Для **продакшена на Vercel** установите `VITE_API_URL=https://finopp-back.onrender.com` через Dashboard (см. раздел Deployment)
 
 ---
 
@@ -194,10 +196,17 @@ Install Command: npm install
 
 ### Environment Variables
 
-В Vercel Dashboard добавь:
+**ВАЖНО:** В Vercel Dashboard → Settings → Environment Variables добавь:
+
 ```
-VITE_API_URL=https://your-backend-url.com
+Name: VITE_API_URL
+Value: https://finopp-back.onrender.com
+Environment: Production ✅
 ```
+
+**Без этой переменной фронт будет пытаться обращаться к localhost!**
+
+После добавления переменной сделай **Redeploy** через Vercel Dashboard или пуш в GitHub.
 
 ---
 
