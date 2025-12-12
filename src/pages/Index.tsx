@@ -14,7 +14,7 @@ import FinanceResults from "@/components/finance/FinanceResults";
 import LoadingState from "@/components/finance/LoadingState";
 import AuthDialog from "@/components/auth/AuthDialog";
 import { useAuth } from "@/contexts/AuthContext";
-import { FinanceAnswers, FinanceAdvice } from "@/types/finance";
+// import { FinanceAnswers, FinanceAdvice } from "@/types/finance";
 import { generateFinanceAdviceFromAPI } from "@/services/financeApi";
 import { useToast } from "@/hooks/use-toast";
 
