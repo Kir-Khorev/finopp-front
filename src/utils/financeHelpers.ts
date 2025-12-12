@@ -57,32 +57,66 @@ const generateSummary = (answers: FinanceAnswers, totalIncome: number, totalExpe
 
 export const generateBudgetAllocation = (totalIncome: number, totalExpenses: number, answers: FinanceAnswers): BudgetItem[] => {
   const balance = totalIncome - totalExpenses;
-  const hasDebt = answers.problems.includes('debt') || answers.expenseSources.some(e => e.type === 'credit' || e.type === 'debt');
 
-  if (balance < 0) {
-    // Deficit budget
-    return [
-      { category: 'Необходимые расходы', percentage: 70, amount: Math.round(totalIncome * 0.7), color: 'hsl(var(--chart-3))' },
-      { category: 'Сокращаемые расходы', percentage: 20, amount: Math.round(totalIncome * 0.2), color: 'hsl(var(--chart-4))' },
-      { category: 'Долги (минимум)', percentage: 10, amount: Math.round(totalIncome * 0.1), color: 'hsl(var(--destructive))' },
-    ];
+  // Группируем расходы пользователя по категориям
+  const categoryMap: { [key: string]: { label: string; amount: number; color: string } } = {};
+
+  const categoryColors: { [key: string]: string } = {
+    food: 'hsl(220, 70%, 50%)',      // синий
+    utilities: 'hsl(280, 60%, 60%)', // фиолетовый
+    credit: 'hsl(0, 70%, 50%)',      // красный
+    debt: 'hsl(0, 85%, 45%)',        // тёмно-красный
+    transport: 'hsl(200, 70%, 50%)', // голубой
+    health: 'hsl(340, 60%, 55%)',    // розовый
+    general: 'hsl(160, 50%, 50%)',   // бирюзовый
+    other: 'hsl(40, 70%, 55%)',      // жёлтый
+  };
+
+  const categoryLabels: { [key: string]: string } = {
+    food: 'Еда',
+    utilities: 'Коммуналка',
+    credit: 'Кредиты',
+    debt: 'Долги',
+    transport: 'Транспорт',
+    health: 'Здоровье',
+    general: 'Бытовое',
+    other: 'Другое',
+  };
+
+  // Собираем реальные расходы
+  answers.expenseSources.forEach(expense => {
+    if (expense.amount > 0) {
+      const key = expense.type;
+      if (!categoryMap[key]) {
+        categoryMap[key] = {
+          label: categoryLabels[key] || 'Другое',
+          amount: 0,
+          color: categoryColors[key] || 'hsl(160, 50%, 50%)',
+        };
+      }
+      categoryMap[key].amount += expense.amount;
+    }
+  });
+
+  // Добавляем остаток если есть
+  if (balance > 0) {
+    categoryMap['savings'] = {
+      label: 'Остаётся',
+      amount: balance,
+      color: 'hsl(142, 70%, 45%)', // зелёный
+    };
   }
 
-  if (hasDebt) {
-    return [
-      { category: 'Погашение долгов', percentage: 25, amount: Math.round(totalIncome * 0.25), color: 'hsl(var(--destructive))' },
-      { category: 'Необходимые расходы', percentage: 50, amount: Math.round(totalIncome * 0.5), color: 'hsl(var(--chart-3))' },
-      { category: 'Резервный фонд', percentage: 10, amount: Math.round(totalIncome * 0.1), color: 'hsl(var(--primary))' },
-      { category: 'Личные расходы', percentage: 15, amount: Math.round(totalIncome * 0.15), color: 'hsl(var(--chart-4))' },
-    ];
-  }
+  // Преобразуем в массив для графика
+  const items: BudgetItem[] = Object.values(categoryMap).map(cat => ({
+    category: cat.label,
+    amount: Math.round(cat.amount),
+    percentage: Math.round((cat.amount / totalIncome) * 100),
+    color: cat.color,
+  }));
 
-  // Standard 50/30/20 budget
-  return [
-    { category: 'Необходимые расходы', percentage: 50, amount: Math.round(totalIncome * 0.5), color: 'hsl(var(--chart-3))' },
-    { category: 'Желания', percentage: 30, amount: Math.round(totalIncome * 0.3), color: 'hsl(var(--chart-4))' },
-    { category: 'Сбережения и инвестиции', percentage: 20, amount: Math.round(totalIncome * 0.2), color: 'hsl(var(--primary))' },
-  ];
+  // Сортируем по убыванию
+  return items.sort((a, b) => b.amount - a.amount);
 };
 
 const generateRecommendations = (answers: FinanceAnswers, totalIncome: number, totalExpenses: number): Recommendation[] => {
@@ -165,20 +199,16 @@ const generateRecommendations = (answers: FinanceAnswers, totalIncome: number, t
 
 export const generateSavingsProjection = (totalIncome: number, totalExpenses: number): SavingsProjection[] => {
   const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
-  const balance = Math.max(0, totalIncome - totalExpenses);
-  const savingsRate = totalIncome > 0 ? balance / totalIncome : 0;
-  const optimalRate = Math.max(savingsRate, 0.2); // At least 20%
+  const monthlyBalance = totalIncome - totalExpenses;
 
-  let projected = 0;
-  let optimal = 0;
+  let accumulated = 0;
 
   return months.map((month) => {
-    projected += totalIncome * savingsRate;
-    optimal += totalIncome * optimalRate;
+    accumulated += monthlyBalance;
     return {
       month,
-      projected: Math.round(projected),
-      optimal: Math.round(optimal),
+      projected: Math.round(accumulated),
+      optimal: 0, // Не используется больше
     };
   });
 };

@@ -1,4 +1,4 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SavingsProjection } from "@/types/finance";
 
@@ -7,23 +7,29 @@ interface SavingsChartProps {
 }
 
 const SavingsChart = ({ data }: SavingsChartProps) => {
+  // Определяем цвет линии: зеленый если в плюсе, красный если в минусе
+  const finalValue = data[data.length - 1]?.projected || 0;
+  const isPositive = finalValue >= 0;
+  const lineColor = isPositive ? '#22c55e' : '#ef4444'; // green-500 / red-500
+
   return (
     <Card className="glass animate-fade-up" style={{ animationDelay: '0.1s' }}>
       <CardHeader>
-        <CardTitle className="font-display">Прогноз накоплений</CardTitle>
+        <CardTitle className="font-display">
+          Прогноз на год
+        </CardTitle>
+        <p className="text-sm text-muted-foreground mt-1">
+          При текущих доходах и расходах — вот что будет через 12 месяцев
+        </p>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px]">
+        <div className="h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data}>
               <defs>
-                <linearGradient id="projectedGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="optimalGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
+                <linearGradient id="dynamicGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={lineColor} stopOpacity={0.3} />
+                  <stop offset="95%" stopColor={lineColor} stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -35,45 +41,41 @@ const SavingsChart = ({ data }: SavingsChartProps) => {
               <YAxis
                 tick={{ fill: 'hsl(var(--muted-foreground))' }}
                 axisLine={{ stroke: 'hsl(var(--border))' }}
-                tickFormatter={(value) => `₽${(value / 1000).toFixed(0)}k`}
+                tickFormatter={(value) => {
+                  const abs = Math.abs(value);
+                  const sign = value < 0 ? '-' : '';
+                  
+                  if (abs >= 1000000) {
+                    return `${sign}₽${(abs / 1000000).toFixed(1)}M`;
+                  }
+                  if (abs >= 1000) {
+                    return `${sign}₽${(abs / 1000).toFixed(0)}k`;
+                  }
+                  return `₽${value}`;
+                }}
               />
               <Tooltip
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
+                    const value = Number(payload[0].value);
                     return (
                       <div className="glass rounded-lg p-3 shadow-lg">
                         <p className="font-medium mb-1">{label}</p>
-                        {payload.map((entry, index) => (
-                          <p key={index} className="text-sm" style={{ color: entry.color }}>
-                            {entry.name === 'projected' ? 'Прогноз' : 'Оптимум'}: ₽{Number(entry.value).toLocaleString()}
-                          </p>
-                        ))}
+                        <p className="text-sm" style={{ color: lineColor }}>
+                          {isPositive ? 'Накопления' : 'Долг'}: ₽{Math.abs(value).toLocaleString()}
+                        </p>
                       </div>
                     );
                   }
                   return null;
                 }}
               />
-              <Legend
-                formatter={(value) => (
-                  <span className="text-foreground text-sm">
-                    {value === 'projected' ? 'Ваш прогноз' : 'Оптимальный путь'}
-                  </span>
-                )}
-              />
               <Area
                 type="monotone"
                 dataKey="projected"
-                stroke="hsl(var(--primary))"
+                stroke={lineColor}
                 strokeWidth={2}
-                fill="url(#projectedGradient)"
-              />
-              <Area
-                type="monotone"
-                dataKey="optimal"
-                stroke="hsl(var(--accent))"
-                strokeWidth={2}
-                fill="url(#optimalGradient)"
+                fill="url(#dynamicGradient)"
               />
             </AreaChart>
           </ResponsiveContainer>

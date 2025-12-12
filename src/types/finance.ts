@@ -2,12 +2,14 @@ export interface IncomeSource {
   id: string;
   type: string;
   amount: number;
+  currency: string;
 }
 
 export interface ExpenseSource {
   id: string;
   type: string;
   amount: number;
+  currency: string;
 }
 
 export interface FinanceAnswers {
@@ -46,34 +48,42 @@ export interface SavingsProjection {
 }
 
 export const INCOME_TYPES = [
-  { value: 'salary', label: '💼 Зарплата' },
+  { value: 'salary', label: '💼 Зарплата по найму' },
   { value: 'pension', label: '👴 Пенсия' },
-  { value: 'investments', label: '📈 Инвестиции' },
-  { value: 'bonus', label: '🎁 Премии' },
-  { value: 'children_help', label: '👨‍👩‍👧 Помощь детей' },
-  { value: 'rental', label: '🏠 Аренда' },
-  { value: 'business', label: '🏢 Бизнес' },
+  { value: 'bonus', label: '🎁 Премии, бонусы' },
+  { value: 'business', label: '🏢 Свой бизнес, фриланс' },
+  { value: 'rental', label: '🏠 Сдаю жильё' },
+  { value: 'children_help', label: '👨‍👩‍👧 Помощь от близких' },
+  { value: 'investments', label: '📈 Доход от вкладов, акций' },
   { value: 'other', label: '📦 Другое' },
 ];
 
 export const EXPENSE_TYPES = [
-  { value: 'general', label: '📊 Общие расходы' },
-  { value: 'credit', label: '💳 Кредиты' },
-  { value: 'debt', label: '📝 Долги' },
-  { value: 'utilities', label: '💡 Коммунальные услуги' },
-  { value: 'food', label: '🍔 Питание' },
-  { value: 'transport', label: '🚗 Транспорт' },
-  { value: 'health', label: '🏥 Здоровье' },
+  { value: 'food', label: '🍔 Еда, продукты' },
+  { value: 'utilities', label: '💡 Коммуналка, связь' },
+  { value: 'credit', label: '💳 Кредиты, рассрочки' },
+  { value: 'debt', label: '📝 Долги (знакомым, МФО)' },
+  { value: 'transport', label: '🚗 Проезд, бензин' },
+  { value: 'health', label: '🏥 Лекарства, врачи' },
+  { value: 'general', label: '📊 Бытовые траты' },
   { value: 'other', label: '📦 Другое' },
 ];
 
 export const PROBLEM_OPTIONS = [
-  { value: 'debt', label: '💳 Не могу выбраться из долгов' },
-  { value: 'savings', label: '💰 Не получается копить' },
-  { value: 'budgeting', label: '📊 Не хватает до зарплаты' },
-  { value: 'investing', label: '📈 Не знаю как инвестировать' },
-  { value: 'retirement', label: '🏖️ Беспокоюсь о пенсии' },
-  { value: 'emergency', label: '🛡️ Нет финансовой подушки' },
-  { value: 'income', label: '📉 Низкий доход' },
-  { value: 'expenses', label: '💸 Слишком большие расходы' },
+  { value: 'debt', label: '💳 Долги душат, не знаю как выбраться' },
+  { value: 'budgeting', label: '📅 До зарплаты не дотягиваю' },
+  { value: 'expenses', label: '💸 Деньги утекают, не понимаю куда' },
+  { value: 'savings', label: '💰 Хочу откладывать, но не выходит' },
+  { value: 'emergency', label: '😰 Боюсь, что не справлюсь если что-то случится' },
+  { value: 'income', label: '📉 Денег катастрофически мало' },
+  { value: 'retirement', label: '👴 Страшно думать про будущее' },
+  { value: 'investing', label: '📈 Хочу приумножить, но не знаю с чего начать' },
+];
+
+export const CURRENCIES = [
+  { value: 'RUB', label: '₽', symbol: '₽' },
+  { value: 'USD', label: '$', symbol: '$' },
+  { value: 'EUR', label: '€', symbol: '€' },
+  { value: 'AZN', label: '₼', symbol: '₼' },
+  { value: 'KZT', label: '₸', symbol: '₸' },
 ];

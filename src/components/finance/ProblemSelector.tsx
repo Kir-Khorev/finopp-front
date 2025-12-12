@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { PROBLEM_OPTIONS } from "@/types/finance";
 
 interface ProblemSelectorProps {
@@ -47,14 +46,11 @@ const ProblemSelector = ({
             <Checkbox
               id={option.value}
               checked={selectedProblems.includes(option.value)}
-              onCheckedChange={() => toggleProblem(option.value)}
+              className="pointer-events-none"
             />
-            <Label 
-              htmlFor={option.value} 
-              className="cursor-pointer flex-1 text-sm"
-            >
+            <span className="flex-1 text-sm">
               {option.label}
-            </Label>
+            </span>
           </div>
         ))}
       </div>
@@ -66,11 +62,11 @@ const ProblemSelector = ({
         <Checkbox
           id="custom"
           checked={showCustom}
-          onCheckedChange={toggleCustom}
+          className="pointer-events-none"
         />
-        <Label htmlFor="custom" className="cursor-pointer flex-1 text-sm">
+        <span className="flex-1 text-sm">
           ✏️ Своё — опишу сам(а)
-        </Label>
+        </span>
       </div>
 
       {showCustom && (
@@ -78,7 +74,7 @@ const ProblemSelector = ({
           <Textarea
             value={customProblem}
             onChange={(e) => onCustomProblemChange(e.target.value)}
-            placeholder="Опишите вашу финансовую проблему..."
+            placeholder="Расскажите своими словами, что беспокоит..."
             className="min-h-[100px] bg-background/50"
           />
         </div>

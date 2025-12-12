@@ -10,11 +10,11 @@ const LoadingState = () => {
         <Brain className="w-16 h-16 text-primary animate-pulse-soft" />
       </div>
       
-      <div className="text-center space-y-2">
+      <div className="text-center space-y-2 max-w-md">
         <h3 className="text-xl font-display font-semibold text-foreground">
-          AI анализирует ваши данные
+          Минутку, смотрю вашу ситуацию
         </h3>
-        <p className="text-muted-foreground">Создаём персональный финансовый план...</p>
+        <p className="text-muted-foreground">Ищу реальные способы, как можно всё выправить...</p>
       </div>
 
       <div className="flex items-center gap-8">
@@ -22,19 +22,19 @@ const LoadingState = () => {
           <div className="p-3 rounded-full bg-primary/10">
             <Brain className="w-6 h-6 text-primary" />
           </div>
-          <span className="text-sm text-muted-foreground">Анализ</span>
+          <span className="text-sm text-muted-foreground">Разбираюсь</span>
         </div>
         <div className="flex flex-col items-center gap-2 animate-fade-up" style={{ animationDelay: '0.3s' }}>
           <div className="p-3 rounded-full bg-accent/10">
             <ChartBar className="w-6 h-6 text-accent" />
           </div>
-          <span className="text-sm text-muted-foreground">Расчёты</span>
+          <span className="text-sm text-muted-foreground">Считаю</span>
         </div>
         <div className="flex flex-col items-center gap-2 animate-fade-up" style={{ animationDelay: '0.6s' }}>
           <div className="p-3 rounded-full bg-primary/10">
             <Lightbulb className="w-6 h-6 text-primary" />
           </div>
-          <span className="text-sm text-muted-foreground">Советы</span>
+          <span className="text-sm text-muted-foreground">Ищу решение</span>
         </div>
       </div>
 

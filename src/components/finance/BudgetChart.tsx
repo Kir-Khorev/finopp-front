@@ -10,23 +10,24 @@ const BudgetChart = ({ data }: BudgetChartProps) => {
   return (
     <Card className="glass animate-fade-up">
       <CardHeader>
-        <CardTitle className="font-display">Распределение бюджета</CardTitle>
+        <CardTitle className="font-display">Куда уходят ваши деньги</CardTitle>
+        <p className="text-sm text-muted-foreground mt-1">
+          Реальное распределение дохода по вашим тратам
+        </p>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px]">
+        <div className="h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={data}
                 cx="50%"
                 cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={3}
+                innerRadius={70}
+                outerRadius={95}
+                paddingAngle={2}
                 dataKey="percentage"
                 nameKey="category"
-                label={({ category, percentage }) => `${percentage}%`}
-                labelLine={false}
               >
                 {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
@@ -38,9 +39,12 @@ const BudgetChart = ({ data }: BudgetChartProps) => {
                     const item = payload[0].payload as BudgetItem;
                     return (
                       <div className="glass rounded-lg p-3 shadow-lg">
-                        <p className="font-medium">{item.category}</p>
-                        <p className="text-muted-foreground">
-                          {item.percentage}% — ₽{item.amount.toLocaleString()}
+                        <p className="font-medium text-sm">{item.category}</p>
+                        <p className="text-lg font-semibold text-foreground">
+                          ₽{item.amount.toLocaleString()}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {item.percentage}% от дохода
                         </p>
                       </div>
                     );

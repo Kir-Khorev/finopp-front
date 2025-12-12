@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2 } from "lucide-react";
-import { IncomeSource, ExpenseSource } from "@/types/finance";
+import { IncomeSource, ExpenseSource, CURRENCIES } from "@/types/finance";
 
 interface IncomeExpenseInputProps {
   items: (IncomeSource | ExpenseSource)[];
@@ -20,6 +20,7 @@ const IncomeExpenseInput = ({ items, onChange, types, placeholder, maxItems = 5 
       id: crypto.randomUUID(),
       type: types[0].value,
       amount: 0,
+      currency: 'RUB',
     };
     onChange([...items, newItem]);
   };
@@ -29,7 +30,7 @@ const IncomeExpenseInput = ({ items, onChange, types, placeholder, maxItems = 5 
     onChange(items.filter(item => item.id !== id));
   };
 
-  const updateItem = (id: string, field: 'type' | 'amount', value: string | number) => {
+  const updateItem = (id: string, field: 'type' | 'amount' | 'currency', value: string | number) => {
     onChange(items.map(item => 
       item.id === id ? { ...item, [field]: value } : item
     ));
@@ -59,17 +60,29 @@ const IncomeExpenseInput = ({ items, onChange, types, placeholder, maxItems = 5 
             </SelectContent>
           </Select>
 
-          <div className="relative flex-1">
+          <div className="flex gap-2 flex-1">
             <Input
               type="number"
               value={item.amount || ''}
               onChange={(e) => updateItem(item.id, 'amount', Number(e.target.value))}
               placeholder={placeholder}
-              className="bg-background/50 pr-8"
+              className="bg-background/50"
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
-              ₽
-            </span>
+            <Select
+              value={item.currency || 'RUB'}
+              onValueChange={(value) => updateItem(item.id, 'currency', value)}
+            >
+              <SelectTrigger className="w-[80px] bg-background/50">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-border z-50">
+                {CURRENCIES.map((curr) => (
+                  <SelectItem key={curr.value} value={curr.value}>
+                    {curr.symbol}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <Button

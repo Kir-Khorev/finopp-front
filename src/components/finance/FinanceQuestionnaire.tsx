@@ -16,8 +16,8 @@ interface FinanceQuestionnaireProps {
 const FinanceQuestionnaire = ({ onComplete }: FinanceQuestionnaireProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<FinanceAnswers>({
-    incomeSources: [{ id: crypto.randomUUID(), type: 'salary', amount: 0 }],
-    expenseSources: [{ id: crypto.randomUUID(), type: 'general', amount: 0 }],
+    incomeSources: [{ id: crypto.randomUUID(), type: 'salary', amount: 0, currency: 'RUB' }],
+    expenseSources: [{ id: crypto.randomUUID(), type: 'general', amount: 0, currency: 'RUB' }],
     problems: [],
     customProblem: '',
     additionalInfo: '',
@@ -26,26 +26,26 @@ const FinanceQuestionnaire = ({ onComplete }: FinanceQuestionnaireProps) => {
   const steps = [
     {
       id: 'income',
-      title: 'Ваши источники дохода',
-      description: 'Укажите все источники дохода и их суммы',
+      title: 'Откуда приходят деньги?',
+      description: 'Все источники хороши — зарплата, подработка, помощь. Укажите примерно, сколько получается за месяц',
       icon: Wallet,
     },
     {
       id: 'expenses',
-      title: 'Ваши расходы',
-      description: 'Укажите основные статьи расходов',
+      title: 'Куда они уходят?',
+      description: 'Без осуждения! Просто честно: на что тратите больше всего',
       icon: CreditCard,
     },
     {
       id: 'problems',
-      title: 'Что вас беспокоит?',
-      description: 'Выберите проблемы, которые хотите решить',
+      title: 'Что давит сильнее всего?',
+      description: 'Выберите то, что не даёт спокойно спать. Мы с этим поработаем в первую очередь',
       icon: AlertCircle,
     },
     {
       id: 'additional',
-      title: 'Что-то ещё?',
-      description: 'Поделитесь дополнительной информацией',
+      title: 'Есть что добавить?',
+      description: 'Может, что-то важное осталось за кадром? Расскажите своими словами',
       icon: MessageSquare,
     },
   ];
@@ -135,7 +135,7 @@ const FinanceQuestionnaire = ({ onComplete }: FinanceQuestionnaireProps) => {
                 incomeSources: items as IncomeSource[] 
               }))}
               types={INCOME_TYPES}
-              placeholder="Сумма"
+              placeholder="Примерно сколько"
               maxItems={5}
             />
           )}
@@ -148,7 +148,7 @@ const FinanceQuestionnaire = ({ onComplete }: FinanceQuestionnaireProps) => {
                 expenseSources: items as ExpenseSource[] 
               }))}
               types={EXPENSE_TYPES}
-              placeholder="Сумма"
+              placeholder="Примерно сколько"
               maxItems={5}
             />
           )}
@@ -164,11 +164,11 @@ const FinanceQuestionnaire = ({ onComplete }: FinanceQuestionnaireProps) => {
 
           {currentStep === 3 && (
             <div className="space-y-2">
-              <Label className="text-base">Дополнительная информация (необязательно)</Label>
+              <Label className="text-base">Есть что добавить? (можно пропустить)</Label>
               <Textarea
                 value={answers.additionalInfo}
                 onChange={(e) => setAnswers(prev => ({ ...prev, additionalInfo: e.target.value }))}
-                placeholder="Расскажите о своей ситуации, целях или любых других деталях, которые могут помочь дать лучший совет..."
+                placeholder="Например: 'У меня двое детей', 'Скоро свадьба', 'Боюсь потерять работу', 'Хочу накопить на машину'..."
                 className="min-h-[150px] bg-background/50"
               />
             </div>
@@ -178,29 +178,32 @@ const FinanceQuestionnaire = ({ onComplete }: FinanceQuestionnaireProps) => {
 
       {/* Navigation */}
       <div className="flex justify-between gap-4">
-        <Button
-          variant="outline"
-          onClick={handleBack}
-          disabled={currentStep === 0}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Назад
-        </Button>
+        {currentStep > 0 ? (
+          <Button
+            variant="outline"
+            onClick={handleBack}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Назад
+          </Button>
+        ) : (
+          <div />
+        )}
         
         <Button
           onClick={handleNext}
           disabled={!canProceed()}
-          className="flex items-center gap-2 gradient-primary text-primary-foreground"
+          className="flex items-center gap-2 gradient-primary text-primary-foreground ml-auto"
         >
           {isLastStep ? (
             <>
               <Sparkles className="w-4 h-4" />
-              Получить советы
+              Найти решение
             </>
           ) : (
             <>
-              Далее
+              Дальше
               <ArrowRight className="w-4 h-4" />
             </>
           )}
