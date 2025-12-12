@@ -37,18 +37,18 @@ const IncomeExpenseInput = ({ items, onChange, types, placeholder, maxItems = 5 
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {items.map((item, index) => (
         <div 
           key={item.id} 
-          className="flex items-center gap-2 animate-fade-in"
+          className="flex flex-col sm:flex-row sm:items-center gap-2 animate-fade-in"
           style={{ animationDelay: `${index * 0.05}s` }}
         >
           <Select
             value={item.type}
             onValueChange={(value) => updateItem(item.id, 'type', value)}
           >
-            <SelectTrigger className="w-[180px] bg-background/50">
+            <SelectTrigger className="w-full sm:w-[180px] bg-background/50">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-card border-border z-50">
@@ -72,10 +72,10 @@ const IncomeExpenseInput = ({ items, onChange, types, placeholder, maxItems = 5 
               value={item.currency || 'RUB'}
               onValueChange={(value) => updateItem(item.id, 'currency', value)}
             >
-              <SelectTrigger className="w-[80px] bg-background/50">
+              <SelectTrigger className="w-[70px] sm:w-[80px] bg-background/50">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-card border-border z-50">
+              <SelectContent className="bg-card border-border z-50 w-[70px] sm:w-[80px] min-w-[70px]">
                 {CURRENCIES.map((curr) => (
                   <SelectItem key={curr.value} value={curr.value}>
                     {curr.symbol}
@@ -83,6 +83,17 @@ const IncomeExpenseInput = ({ items, onChange, types, placeholder, maxItems = 5 
                 ))}
               </SelectContent>
             </Select>
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => removeItem(item.id)}
+              disabled={items.length <= 1}
+              className="shrink-0 text-muted-foreground hover:text-destructive sm:hidden"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
           </div>
 
           <Button
@@ -91,7 +102,7 @@ const IncomeExpenseInput = ({ items, onChange, types, placeholder, maxItems = 5 
             size="icon"
             onClick={() => removeItem(item.id)}
             disabled={items.length <= 1}
-            className="shrink-0 text-muted-foreground hover:text-destructive"
+            className="hidden sm:flex shrink-0 text-muted-foreground hover:text-destructive"
           >
             <Trash2 className="w-4 h-4" />
           </Button>

@@ -13,6 +13,7 @@ import FinanceQuestionnaire from "@/components/finance/FinanceQuestionnaire";
 import FinanceResults from "@/components/finance/FinanceResults";
 import LoadingState from "@/components/finance/LoadingState";
 import AuthDialog from "@/components/auth/AuthDialog";
+import GradientBackground from "@/components/ui/GradientBackground";
 import { useAuth } from "@/contexts/AuthContext";
 import { FinanceAnswers, FinanceAdvice } from "@/types/finance";
 import { generateFinanceAdviceFromAPI } from "@/services/financeApi";
@@ -42,11 +43,6 @@ const Index = () => {
       const result = await generateFinanceAdviceFromAPI(answers);
       setAdvice(result);
       setAppState('results');
-      
-      toast({
-        title: "Готово!",
-        description: "Посмотрел вашу ситуацию. Вот что можно сделать.",
-      });
     } catch (error) {
       console.error('Error generating advice:', error);
       setAppState('questionnaire');
@@ -65,20 +61,22 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col">
+      <GradientBackground />
+      
       {/* Header */}
-      <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto py-4 px-4">
+      <header className="border-b border-border/50 bg-background/95 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto py-2 px-3 sm:px-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl gradient-primary">
-                <Wallet className="w-6 h-6 text-primary-foreground" />
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg gradient-primary">
+                <Wallet className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-display font-bold text-foreground">
-                  Fin<span className="text-primary">AI</span>nce
+                <h1 className="text-lg font-display font-bold text-foreground">
+                  Друг<span className="text-primary">AI</span>
                 </h1>
-                <p className="text-xs text-muted-foreground">Помогаем выйти из долгов</p>
+                <p className="text-xs text-muted-foreground hidden sm:block">Твой денежный помощник</p>
               </div>
             </div>
             
@@ -124,18 +122,18 @@ const Index = () => {
       <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
 
       {/* Main Content */}
-      <main className="container mx-auto py-12 px-4">
+      <main className="container mx-auto py-4 sm:py-6 px-3 sm:px-4 flex-1">
         {appState === 'questionnaire' && (
-          <div className="space-y-8">
-            <div className="text-center space-y-4 animate-fade-in">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
+          <div className="space-y-4">
+            <div className="text-center space-y-2 animate-fade-in">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium">
                 <Sparkles className="w-4 h-4" />
                 Понимаем вашу ситуацию
               </div>
-              <h2 className="text-4xl font-display font-bold text-foreground">
+              <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
                 Давайте вместе выправим ситуацию
               </h2>
-              <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+              <p className="text-base text-muted-foreground max-w-xl mx-auto">
                 Я знаю, что сейчас может быть очень непросто. Расскажите мне честно о своих доходах и тратах — 
                 вместе найдём выход и составим реальный план действий
               </p>
@@ -153,9 +151,9 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 py-6 mt-auto">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>© 2025 FinAInce. Мы верим, что каждый заслуживает финансовую стабильность.</p>
+      <footer className="border-t border-border/50 mt-auto bg-background/95 backdrop-blur-sm">
+        <div className="container mx-auto px-3 sm:px-4 text-center text-xs text-muted-foreground leading-none py-1.5">
+          © 2026 ДругAI. Мы верим, что каждый заслуживает финансовую стабильность.
         </div>
       </footer>
     </div>

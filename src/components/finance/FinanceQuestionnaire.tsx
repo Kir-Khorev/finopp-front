@@ -117,13 +117,13 @@ const FinanceQuestionnaire = ({ onComplete }: FinanceQuestionnaireProps) => {
 
       {/* Question Card */}
       <Card className="glass animate-fade-up">
-        <CardContent className="pt-6 space-y-6">
+        <CardContent className="pt-4 sm:pt-6 space-y-4 sm:space-y-6 px-3 sm:px-6">
           <div className="text-center space-y-2">
-            <div className="inline-flex p-3 rounded-full bg-primary/10 text-primary mb-2">
-              <StepIcon className="w-6 h-6" />
+            <div className="inline-flex p-2 sm:p-3 rounded-full bg-primary/10 text-primary mb-2">
+              <StepIcon className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <h3 className="text-xl font-display font-semibold">{currentStepData.title}</h3>
-            <p className="text-muted-foreground">{currentStepData.description}</p>
+            <h3 className="text-lg sm:text-xl font-display font-semibold">{currentStepData.title}</h3>
+            <p className="text-sm sm:text-base text-muted-foreground">{currentStepData.description}</p>
           </div>
 
           {/* Step Content */}
@@ -177,34 +177,34 @@ const FinanceQuestionnaire = ({ onComplete }: FinanceQuestionnaireProps) => {
       </Card>
 
       {/* Navigation */}
-      <div className="flex justify-between gap-4">
-        {currentStep > 0 ? (
+      <div className={`flex gap-2 sm:gap-4 ${currentStep === 0 ? 'justify-center' : 'justify-between'}`}>
+        {currentStep > 0 && (
           <Button
             variant="outline"
             onClick={handleBack}
-            className="flex items-center gap-2"
+            className="flex-1 flex items-center justify-center gap-1 sm:gap-2 text-sm sm:text-base px-3 sm:px-4"
           >
             <ArrowLeft className="w-4 h-4" />
-            Назад
+            <span className="hidden xs:inline">Назад</span>
           </Button>
-        ) : (
-          <div />
         )}
         
         <Button
           onClick={handleNext}
           disabled={!canProceed()}
-          className="flex items-center gap-2 gradient-primary text-primary-foreground ml-auto"
+          className={`${currentStep === 0 ? 'w-full' : 'flex-1'} flex items-center justify-center gap-1 sm:gap-2 gradient-primary text-primary-foreground text-sm sm:text-base px-3 sm:px-4`}
         >
           {isLastStep ? (
             <>
               <Sparkles className="w-4 h-4" />
-              Найти решение
+              <span className="hidden xs:inline">Найти решение</span>
+              <span className="xs:hidden">Решение</span>
             </>
           ) : (
             <>
-              Дальше
-              <ArrowRight className="w-4 h-4" />
+              <span className="hidden xs:inline">Дальше</span>
+              <span className="xs:hidden">→</span>
+              <ArrowRight className="w-4 h-4 hidden xs:inline" />
             </>
           )}
         </Button>

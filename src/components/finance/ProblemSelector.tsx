@@ -34,21 +34,21 @@ const ProblemSelector = ({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div className="space-y-3 sm:space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
         {PROBLEM_OPTIONS.map((option, index) => (
           <div
             key={option.value}
-            className="flex items-center space-x-3 p-3 rounded-lg border border-border/50 bg-background/30 hover:bg-background/50 transition-colors cursor-pointer animate-fade-in"
+            className="flex items-center space-x-2 sm:space-x-3 p-2.5 sm:p-3 rounded-lg border border-border/50 bg-background/30 hover:bg-background/50 transition-colors cursor-pointer animate-fade-in"
             style={{ animationDelay: `${index * 0.03}s` }}
             onClick={() => toggleProblem(option.value)}
           >
             <Checkbox
               id={option.value}
               checked={selectedProblems.includes(option.value)}
-              className="pointer-events-none"
+              className="pointer-events-none shrink-0"
             />
-            <span className="flex-1 text-sm">
+            <span className="flex-1 text-xs sm:text-sm leading-tight">
               {option.label}
             </span>
           </div>
@@ -56,15 +56,15 @@ const ProblemSelector = ({
       </div>
 
       <div
-        className="flex items-center space-x-3 p-3 rounded-lg border border-dashed border-border/50 bg-background/30 hover:bg-background/50 transition-colors cursor-pointer"
+        className="flex items-center space-x-2 sm:space-x-3 p-2.5 sm:p-3 rounded-lg border border-dashed border-border/50 bg-background/30 hover:bg-background/50 transition-colors cursor-pointer"
         onClick={toggleCustom}
       >
         <Checkbox
           id="custom"
           checked={showCustom}
-          className="pointer-events-none"
+          className="pointer-events-none shrink-0"
         />
-        <span className="flex-1 text-sm">
+        <span className="flex-1 text-xs sm:text-sm">
           ✏️ Своё — опишу сам(а)
         </span>
       </div>
