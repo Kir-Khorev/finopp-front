@@ -71,19 +71,27 @@ VITE_API_URL=http://localhost:8080
 finopp-front/
 ├── src/
 │   ├── components/
-│   │   ├── finance/         # Финансовые компоненты (опросник, графики, результаты)
-│   │   └── ui/              # UI библиотека (shadcn)
-│   ├── pages/               # Страницы приложения
-│   ├── services/            # API сервисы
-│   │   └── financeApi.ts    # Интеграция с backend
-│   ├── types/               # TypeScript типы
-│   ├── utils/               # Утилиты (fallback mock, экспорт)
-│   └── hooks/               # Custom React hooks
-├── public/                  # Static assets
-├── .env.example            # Пример env переменных
-├── index.html              # Entry point
-├── vite.config.ts          # Vite конфигурация
-└── package.json            # Dependencies
+│   │   ├── auth/           # Компоненты авторизации
+│   │   ├── finance/        # Финансовые компоненты (опросник, графики, результаты)
+│   │   └── ui/             # UI библиотека (shadcn)
+│   ├── pages/              # Страницы приложения
+│   │   └── Index.tsx       # Главная страница
+│   ├── services/           # API сервисы
+│   │   ├── financeApi.ts   # Интеграция с backend
+│   │   └── authApi.ts      # Авторизация
+│   ├── contexts/           # React contexts
+│   │   └── AuthContext.tsx # Контекст авторизации
+│   ├── types/              # TypeScript типы
+│   │   └── finance.ts      # Типы для финансовых данных
+│   ├── utils/              # Утилиты
+│   │   ├── exportUtils.ts  # Экспорт в Excel
+│   │   └── financeHelpers.ts # Fallback логика
+│   └── hooks/              # Custom React hooks
+├── public/                 # Static assets
+├── .env.example           # Пример env переменных
+├── index.html             # Entry point
+├── vite.config.ts         # Vite конфигурация
+└── package.json           # Dependencies
 ```
 
 ---
@@ -146,13 +154,14 @@ npm run lint
 
 ## 🧩 Key Features
 
-- ✅ Real-time финансовый анализ через AI
-- ✅ Структурированный опросник с валидацией
+- ✅ Real-time финансовый анализ через AI (Groq Llama 3.3 70B)
+- ✅ JWT авторизация с backend
+- ✅ Структурированный опросник с валидацией (React Hook Form + Zod)
 - ✅ Визуализация данных (Recharts)
 - ✅ Экспорт результатов в Excel
 - ✅ Responsive design (mobile-first)
 - ✅ Error handling & loading states
-- ✅ Fallback на локальную логику
+- ✅ Fallback на локальную логику если API недоступен
 
 ---
 
@@ -212,14 +221,10 @@ Environment: Production ✅
 
 ## 📝 Notes for Developers
 
-- Vite использует `import.meta.env` для env переменных
+- **Vite** использует `import.meta.env` для env переменных
 - Все env должны начинаться с `VITE_`
-- API интеграция в `src/services/financeApi.ts`
-- Fallback логика в `src/utils/financeHelpers.ts`
-- Backend API в репозитории `../finopp-back`
-
----
-
-## Backup
-
-Старая версия на Next.js сохранена в ветке `backup-nextjs`.
+- **API интеграция:** `src/services/financeApi.ts`
+- **Fallback логика:** `src/utils/financeHelpers.ts` (если backend недоступен)
+- **Авторизация:** JWT токены через `AuthContext`
+- **State management:** React Context + TanStack Query
+- **Backend API:** репозиторий `../finopp-back`
