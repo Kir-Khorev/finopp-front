@@ -243,3 +243,4 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
 };
 
 export default AuthDialog;
+
