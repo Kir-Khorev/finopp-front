@@ -12,6 +12,14 @@ export const initAnalytics = async () => {
     return;
   }
 
+  // Валидация API ключа
+  if (AMPLITUDE_API_KEY.length < 20) {
+    console.error('❌ Invalid Amplitude API key - too short:', AMPLITUDE_API_KEY.length, 'chars');
+    console.error('   Expected: 32+ characters');
+    console.error('   Check your .env.local file');
+    return;
+  }
+
   if (isInitialized) {
     return;
   }
@@ -23,6 +31,9 @@ export const initAnalytics = async () => {
   initPromise = (async () => {
     try {
       console.log('🔄 Initializing Amplitude...');
+      console.log('📊 API Key length:', AMPLITUDE_API_KEY.length);
+      console.log('📊 API Key preview:', AMPLITUDE_API_KEY.substring(0, 8) + '...' + AMPLITUDE_API_KEY.substring(AMPLITUDE_API_KEY.length - 4));
+
       await initAll(AMPLITUDE_API_KEY, {
         serverZone: 'US',
 
@@ -44,7 +55,6 @@ export const initAnalytics = async () => {
 
       isInitialized = true;
       console.log('✅ Amplitude initialized successfully');
-      console.log('📊 API Key:', AMPLITUDE_API_KEY.substring(0, 8) + '...');
     } catch (error) {
       console.error('❌ Failed to initialize Amplitude:', error);
       initPromise = null;
