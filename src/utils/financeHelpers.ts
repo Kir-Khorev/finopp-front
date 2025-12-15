@@ -1,19 +1,57 @@
 import { FinanceAnswers, FinanceAdvice, BudgetItem, Recommendation, SavingsProjection, INCOME_TYPES, EXPENSE_TYPES, PROBLEM_OPTIONS } from "@/types/finance";
 
+/**
+ * Конвертирует сумму в любой валюте в рубли (примерные курсы)
+ */
+const convertToRUB = (amount: number, currency: string): number => {
+  if (currency === 'RUB') return amount;
+
+  const rates: Record<string, number> = {
+    'USD': 95.0,
+    'EUR': 105.0,
+    'KZT': 0.20,
+    'AZN': 56.0,
+  };
+
+  return amount * (rates[currency] || 1);
+};
+
 // Local mock generator - используется как fallback если API недоступен
 export const generateFinanceAdviceLocal = async (answers: FinanceAnswers): Promise<FinanceAdvice> => {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 2500));
 
-  const totalIncome = answers.incomeSources.reduce((sum, s) => sum + s.amount, 0);
-  const totalExpenses = answers.expenseSources.reduce((sum, s) => sum + s.amount, 0);
+  // Конвертируем все суммы в рубли
+  const totalIncome = answers.incomeSources.reduce(
+    (sum, s) => sum + convertToRUB(s.amount, s.currency),
+    0
+  );
+  const totalExpenses = answers.expenseSources.reduce(
+    (sum, s) => sum + convertToRUB(s.amount, s.currency),
+    0
+  );
 
-  const budgetAllocation = generateBudgetAllocation(totalIncome, totalExpenses, answers);
-  const recommendations = generateRecommendations(answers, totalIncome, totalExpenses);
+  // Создаём копию answers с конвертированными суммами
+  const answersInRUB: FinanceAnswers = {
+    ...answers,
+    incomeSources: answers.incomeSources.map(s => ({
+      ...s,
+      amount: convertToRUB(s.amount, s.currency),
+      currency: 'RUB',
+    })),
+    expenseSources: answers.expenseSources.map(s => ({
+      ...s,
+      amount: convertToRUB(s.amount, s.currency),
+      currency: 'RUB',
+    })),
+  };
+
+  const budgetAllocation = generateBudgetAllocation(totalIncome, totalExpenses, answersInRUB);
+  const recommendations = generateRecommendations(answersInRUB, totalIncome, totalExpenses);
   const projectedSavings = generateSavingsProjection(totalIncome, totalExpenses);
 
   return {
-    summary: generateSummary(answers, totalIncome, totalExpenses),
+    summary: generateSummary(answersInRUB, totalIncome, totalExpenses),
     recommendations,
     budgetAllocation,
     projectedSavings,
