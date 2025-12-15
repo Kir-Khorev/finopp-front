@@ -1,3 +1,5 @@
+import { trackEvent, FinanceEvents } from './analytics';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 /**
@@ -55,7 +57,14 @@ export const register = async (data: RegisterData): Promise<AuthResponse> => {
     throw new Error(message);
   }
 
-  return response.json();
+  const result = await response.json();
+
+  // Трекинг успешной регистрации
+  trackEvent(FinanceEvents.USER_REGISTERED, {
+    userId: result.user.id,
+  });
+
+  return result;
 };
 
 export const login = async (data: LoginData): Promise<AuthResponse> => {
@@ -111,4 +120,5 @@ export const logout = () => {
   localStorage.removeItem('auth_token');
   localStorage.removeItem('user');
 };
+
 

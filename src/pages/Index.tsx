@@ -18,6 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { FinanceAnswers, FinanceAdvice } from "@/types/finance";
 import { generateFinanceAdviceFromAPI } from "@/services/financeApi";
 import { useToast } from "@/hooks/use-toast";
+import { trackEvent, FinanceEvents } from "@/services/analytics";
 
 type AppState = 'questionnaire' | 'loading' | 'results';
 
@@ -38,14 +39,30 @@ const Index = () => {
 
   const handleQuestionnaireComplete = async (answers: FinanceAnswers) => {
     setAppState('loading');
+    trackEvent(FinanceEvents.QUESTIONNAIRE_COMPLETED, {
+      income: answers.income,
+      expenses: answers.expenses,
+      problemCategory: answers.primaryProblem.category,
+    });
+    trackEvent(FinanceEvents.ADVICE_GENERATION_STARTED);
     
     try {
       const result = await generateFinanceAdviceFromAPI(answers);
       setAdvice(result);
       setAppState('results');
+      
+      trackEvent(FinanceEvents.ADVICE_GENERATION_SUCCESS, {
+        savingsPotential: result.savingsPotential,
+        recommendationsCount: result.recommendations.length,
+      });
+      trackEvent(FinanceEvents.ADVICE_VIEWED);
     } catch (error) {
       console.error('Error generating advice:', error);
       setAppState('questionnaire');
+      
+      trackEvent(FinanceEvents.ADVICE_GENERATION_FAILED, {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
       
       toast({
         title: "Упс, что-то пошло не так",
@@ -56,6 +73,7 @@ const Index = () => {
   };
 
   const handleReset = () => {
+    trackEvent(FinanceEvents.RESET_TO_QUESTIONNAIRE);
     setAdvice(null);
     setAppState('questionnaire');
   };

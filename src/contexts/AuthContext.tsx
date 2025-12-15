@@ -1,5 +1,7 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { AuthResponse, getUser, getToken, logout as logoutApi } from '@/services/authApi';
+import { identifyUser, trackEvent, FinanceEvents } from '@/services/analytics';
 
 interface AuthContextType {
   user: AuthResponse['user'] | null;
@@ -29,9 +31,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (newToken: string, newUser: AuthResponse['user']) => {
     setToken(newToken);
     setUser(newUser);
+    
+    // Трекинг логина
+    identifyUser(newUser.id, {
+      email: newUser.email,
+      name: newUser.name,
+    });
+    trackEvent(FinanceEvents.USER_LOGGED_IN);
   };
 
   const logout = () => {
+    trackEvent(FinanceEvents.USER_LOGGED_OUT);
     logoutApi();
     setToken(null);
     setUser(null);
@@ -59,4 +69,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
 
