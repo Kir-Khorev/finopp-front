@@ -1,5 +1,5 @@
-// @ts-expect-error - Package will be installed via npm install
-import { initAll, track, Identify, identify, setUserId } from '@amplitude/unified';
+import { initAll, track, identify, setUserId } from '@amplitude/unified';
+import { Identify } from '@amplitude/analytics-browser';
 
 const AMPLITUDE_API_KEY = import.meta.env.VITE_AMPLITUDE_API_KEY || '';
 
