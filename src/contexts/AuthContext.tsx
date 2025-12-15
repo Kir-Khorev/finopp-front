@@ -32,8 +32,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setToken(newToken);
     setUser(newUser);
     
-    // Трекинг логина
-    identifyUser(newUser.id, {
+    // Трекинг логина (userId должен быть string!)
+    identifyUser(String(newUser.id), {
       email: newUser.email,
       name: newUser.name,
     });

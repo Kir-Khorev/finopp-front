@@ -4,10 +4,11 @@ import { Identify } from '@amplitude/analytics-browser';
 const AMPLITUDE_API_KEY = import.meta.env.VITE_AMPLITUDE_API_KEY || '';
 
 let isInitialized = false;
+let initPromise: Promise<void> | null = null;
 
-export const initAnalytics = () => {
+export const initAnalytics = async () => {
   if (!AMPLITUDE_API_KEY) {
-    console.warn('Amplitude API key not found. Analytics will not be initialized.');
+    console.warn('⚠️ Amplitude API key not found. Analytics will not be initialized.');
     return;
   }
 
@@ -15,49 +16,68 @@ export const initAnalytics = () => {
     return;
   }
 
-  try {
-    initAll(AMPLITUDE_API_KEY, {
-      serverZone: 'US',
-
-      // Analytics с автокапчуром
-      analytics: {
-        defaultTracking: {
-          sessions: true,
-          pageViews: true,
-          formInteractions: true,
-          fileDownloads: true,
-        },
-      },
-
-      // Session Replay для отладки UX
-      sessionReplay: {
-        sampleRate: 0.3, // 30% сессий для финтеха достаточно
-      },
-    });
-
-    isInitialized = true;
-    console.log('✅ Amplitude initialized successfully');
-  } catch (error) {
-    console.error('Failed to initialize Amplitude:', error);
+  if (initPromise) {
+    return initPromise;
   }
+
+  initPromise = (async () => {
+    try {
+      console.log('🔄 Initializing Amplitude...');
+      await initAll(AMPLITUDE_API_KEY, {
+        serverZone: 'US',
+
+        // Analytics с автокапчуром
+        analytics: {
+          defaultTracking: {
+            sessions: true,
+            pageViews: true,
+            formInteractions: true,
+            fileDownloads: true,
+          },
+        },
+
+        // Session Replay для отладки UX
+        sessionReplay: {
+          sampleRate: 0.3, // 30% сессий для финтеха достаточно
+        },
+      });
+
+      isInitialized = true;
+      console.log('✅ Amplitude initialized successfully');
+      console.log('📊 API Key:', AMPLITUDE_API_KEY.substring(0, 8) + '...');
+    } catch (error) {
+      console.error('❌ Failed to initialize Amplitude:', error);
+      initPromise = null;
+    }
+  })();
+
+  return initPromise;
 };
 
 // Трекинг событий
 export const trackEvent = (eventName: string, eventProperties?: Record<string, unknown>) => {
-  if (!isInitialized) return;
+  if (!isInitialized) {
+    console.warn('⚠️ Amplitude not initialized yet. Event queued:', eventName);
+    return;
+  }
 
   try {
+    console.log('📤 Tracking event:', eventName, eventProperties);
     track(eventName, eventProperties);
   } catch (error) {
-    console.error('Failed to track event:', error);
+    console.error('❌ Failed to track event:', eventName, error);
   }
 };
 
 // Идентификация пользователя
 export const identifyUser = (userId: string, userProperties?: Record<string, unknown>) => {
-  if (!isInitialized) return;
+  if (!isInitialized) {
+    console.warn('⚠️ Amplitude not initialized yet. User identification skipped.');
+    return;
+  }
 
   try {
+    console.log('👤 Identifying user:', userId, userProperties);
     setUserId(userId);
 
     if (userProperties) {
@@ -68,7 +88,7 @@ export const identifyUser = (userId: string, userProperties?: Record<string, unk
       identify(identifyObj);
     }
   } catch (error) {
-    console.error('Failed to identify user:', error);
+    console.error('❌ Failed to identify user:', error);
   }
 };
 
